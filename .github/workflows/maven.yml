@@ -35,7 +35,7 @@ jobs:
 
      - name: Test postgres database
        run: go test -v ./...
-       working-directory: D:/miltilangdemo
+       working-directory: C:\Program Files\PostgreSQL\15
        env:
         # use postgres for the host here because we have specified a contaienr for the job.
         # If we were running the job on the VM this would be localhost
