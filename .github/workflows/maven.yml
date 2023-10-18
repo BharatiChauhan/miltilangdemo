@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-      services:
+    - services:
       postgres:
         image: postgres:15
         env:
