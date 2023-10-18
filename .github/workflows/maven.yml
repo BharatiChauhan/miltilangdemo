@@ -35,24 +35,46 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - services:
-        postgres:
-          image: postgres:15
-          env:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: root
-            POSTGRES_DB: mydb
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
+      services:
+      # label used to access the service container
+      postgres:
+        # Docker Hub image
+      image: postgres:latest
+        # service environment variables
+        # `POSTGRES_HOST` is `postgres`
+      env:
+          # optional (defaults to `postgres`)
+          POSTGRES_DB: postgres_db
+          # required
+          POSTGRES_PASSWORD: root
+          # optional (defaults to `5432`)
+          POSTGRES_PORT: 5432
+          # optional (defaults to `postgres`)
+          POSTGRES_USER: postgres
           ports:
-            - 5432:5432
+          # maps tcp port 5432 on service container to the host
+          - 5432:5432
+        # set health checks to wait until postgres has started
+          options: >-
+           --health-cmd pg_isready
+           --health-interval 10s
+           --health-timeout 5s
+           --health-retries 5
 
+      steps:
+        - name: Install PostgreSQL client
+    # ...
+        - name: Setup database
+          run: psql -h postgres -U postgres_user -c 'CREATE DATABASE "postgres_db";'
+          env:
+              PGPASSWORD: root
 
-   
-
+    - name: Query database
+      run: psql -h postgres -d postgres_db -U postgres_user -c 'SELECT 1;'
+      env:
+        # postgress password is required; alternatively, you can run:
+        # `PGPASSWORD=postgres_password psql ...`
+        PGPASSWORD: root
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
