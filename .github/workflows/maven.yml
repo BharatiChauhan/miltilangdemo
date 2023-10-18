@@ -40,13 +40,16 @@ jobs:
 
      - name: Source Compiling
        env:
-           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mydb
-           DB_USERNAME: postgres
-           DB_PASSWORD: root
-           DB_HOSTNAME: localhost
+           PGHOST: localhost
+           PGUSER: postgres
+           PGPASSWORD: mypassword
+           PGDATABASE: mydb
+           PGPORT: 5432
+
+
 
        run: |
-         psql -U postgres -c "ALTER USER postgres WITH PASSWORD 'root'"
+              RUN psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "CREATE TABLE mytable (id int, name varchar(255));"
 
      - name: Build & push Docker image
        uses: mr-smithers-excellent/docker-build-push@v6
