@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:15
+        image: postgres:15.4
         env:
           DB_HOST: localhost
           DB_USER: postgres
