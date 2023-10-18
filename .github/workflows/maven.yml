@@ -15,11 +15,11 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          PGHOST: localhost
-          PGUSER: postgres
-          PGPASSWORD: root
-          PGDATABASE: mydb
-          PGPORT: 5432
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASSWORD: root
+          DB_DATABASE: mydb
+          DB_PORT: 5432
 
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -37,6 +37,7 @@ jobs:
      - name: Build with Maven
        run: mvn clean install
 
+
      - name: Source Compiling
        env:
            DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mydb
@@ -45,12 +46,7 @@ jobs:
            DB_HOSTNAME: localhost
            MIX_ENV: test
        run: |
-           mix deps.get
-           mix deps.compile
-           mix ecto.drop
-           mix ecto.create
-           mix ecto.migrate
-           mix test --trace
+         psql -U postgres -c "ALTER USER postgres WITH PASSWORD 'root'"
 
      - name: Build & push Docker image
        uses: mr-smithers-excellent/docker-build-push@v6
