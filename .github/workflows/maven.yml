@@ -23,6 +23,21 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+    - services:
+          postgres:
+            image: postgres:15
+            env:
+              POSTGRES_USER: postgres
+              POSTGRES_PASSWORD: root
+              POSTGRES_DB: mydb
+            options: >-
+              --health-cmd pg_isready
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+            ports:
+              - 5432:5432
+
     - name: Build & push Docker image
       uses: mr-smithers-excellent/docker-build-push@v6
       with:
@@ -34,20 +49,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-    - services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: mydb
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-            - 5432:5432
+
 
    
 
