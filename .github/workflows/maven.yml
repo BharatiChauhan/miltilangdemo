@@ -18,7 +18,7 @@ jobs:
 
   steps:
 
-    - name: Start PostgreSQL on Ubuntu
+    - name: Start PostgreSQL on windows
       run: |
           sudo systemctl start postgresql.service
           pg_isready
