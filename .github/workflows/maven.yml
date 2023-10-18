@@ -21,6 +21,7 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
+
     steps:
      - uses: actions/checkout@v3
      - name: Set up JDK 17
@@ -32,6 +33,17 @@ jobs:
      - name: Build with Maven
        run: mvn clean install
 
+     - name: Test postgres database
+       run: go test -v ./...
+       working-directory: D:/miltilangdemo
+       env:
+        # use postgres for the host here because we have specified a contaienr for the job.
+        # If we were running the job on the VM this would be localhost
+        PG_HOST: localhost
+        PG_USER: postgres
+        PG_DATABASE: mydb
+        PG_PASSWORD: root
+        PG_PORT: ${{ job.services.postgres.ports['5432'] }}
 
 
      - name: Build & push Docker image
