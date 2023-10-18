@@ -11,20 +11,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15.4
-        env:
-          DB_HOST: localhost
-          DB_USER: postgres
-          DB_PASSWORD: root
-          DB_DATABASE: mydb
-          DB_PORT: 5432
 
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-        ports:
-          - 5432:5432
 
     steps:
      - uses: actions/checkout@v3
@@ -38,28 +25,15 @@ jobs:
        run: mvn clean install
 
 
-     - name: Source Compiling
-       env:
-           PGHOST: localhost
-           PGUSER: postgres
-           PGPASSWORD: root
-           PGDATABASE: mydb
-           PGPORT: 5432
-
-
-
-       run: |
-              RUN psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -e $PGPASSWORD -c "CREATE TABLE mytable (id int, name varchar(255));"
-
      - name: Build & push Docker image
        uses: mr-smithers-excellent/docker-build-push@v6
        with:
-          image: bharati03/github-action
-          tags: latest
-          registry: docker.io
-          dockerfile: Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+           image: bharati03/github-action
+           tags: latest
+           registry: docker.io
+           dockerfile: Dockerfile
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
