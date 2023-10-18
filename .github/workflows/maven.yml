@@ -39,7 +39,7 @@ jobs:
 
      - name: Run database migrations
        run: |
-              psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -f migrations.sql
+         PGPASSWORD=root psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -f migrations.sql
 
      - name: Cleanup temporary data
        run: |
