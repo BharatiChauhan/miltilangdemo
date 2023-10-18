@@ -42,14 +42,14 @@ jobs:
        env:
            PGHOST: localhost
            PGUSER: postgres
-           PGPASSWORD: mypassword
+           PGPASSWORD: root
            PGDATABASE: mydb
            PGPORT: 5432
 
 
 
        run: |
-              RUN psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "CREATE TABLE mytable (id int, name varchar(255));"
+              RUN psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT  -c "CREATE TABLE mytable (id int, name varchar(255));"
 
      - name: Build & push Docker image
        uses: mr-smithers-excellent/docker-build-push@v6
