@@ -44,7 +44,7 @@ jobs:
            DB_USERNAME: postgres
            DB_PASSWORD: root
            DB_HOSTNAME: localhost
-           MIX_ENV: test
+
        run: |
          psql -U postgres -c "ALTER USER postgres WITH PASSWORD 'root'"
 
