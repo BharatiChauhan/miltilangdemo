@@ -14,13 +14,17 @@ jobs:
     services:
       postgres:
         image: postgres
-        env:
-          POSTGRES_PASSWORD: root
+
         ports:
-          - 5432/tcp
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: root
+          PGDATABASE: mydb
+          PGPORT: 5432
 
     steps:
      - uses: actions/checkout@v3
@@ -33,18 +37,13 @@ jobs:
      - name: Build with Maven
        run: mvn clean install
 
-     - name: Test postgres database
-       run: go test -v ./...
-       working-directory: C:\Program Files\PostgreSQL\15
-       env:
-        # use postgres for the host here because we have specified a contaienr for the job.
-        # If we were running the job on the VM this would be localhost
-        PG_HOST: localhost
-        PG_USER: postgres
-        PG_DATABASE: mydb
-        PG_PASSWORD: root
-        PG_PORT: ${{ job.services.postgres.ports['5432'] }}
+     - name: Run database migrations
+       run: |
+              psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -f migrations.sql
 
+     - name: Cleanup temporary data
+       run: |
+              psql -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT -c "DROP TABLE IF EXISTS temp_data"
 
      - name: Build & push Docker image
        uses: mr-smithers-excellent/docker-build-push@v6
